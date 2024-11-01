@@ -17,11 +17,12 @@ model User {
   createdAt DateTime @default(now()) // Ngày tạo, tự động lấy thời gian hiện tại
   updatedAt DateTime @updatedAt // Ngày cập nhật, tự động cập nhật khi thay đổi
 
-  orders    Order[] // Danh sách đơn hàng của người dùng
-  reviews   Review[] // Danh sách đánh giá của người dùng
-  cart      Cart? // Giỏ hàng của người dùng
-  wishlist  Wishlist? // Danh sách yêu thích của người dùng
-  addresses Address[] // Địa chỉ của người dùng
+  orders       Order[] // Danh sách đơn hàng của người dùng
+  reviews      Review[] // Danh sách đánh giá của người dùng
+  cart         Cart? // Giỏ hàng của người dùng
+  wishlist     Wishlist? // Danh sách yêu thích của người dùng
+  addresses    Address[] // Địa chỉ của người dùng
+  Notification Notification[]
 }
 
 // Bảng danh mục sản phẩm (Category)
@@ -33,6 +34,8 @@ model Category {
   createdAt DateTime @default(now()) // Ngày tạo
   updatedAt DateTime @updatedAt // Ngày cập nhật
 }
+
+// Bảng sản phẩm (Product)
 
 // Bảng sản phẩm (Product)
 model Product {
@@ -50,10 +53,14 @@ model Product {
   cartItems     CartItem[] // Danh sách các mục trong giỏ hàng
   wishlistItems Wishlist? // Liên kết đến danh sách yêu thích
 
-  createdAt DateTime @default(now()) // Ngày tạo
-  updatedAt DateTime @updatedAt // Ngày cập nhật
-  Brand     Brand?   @relation(fields: [brandId], references: [id])
-  brandId   String?  @db.ObjectId
+  createdAt           DateTime           @default(now()) // Ngày tạo
+  updatedAt           DateTime           @updatedAt // Ngày cập nhật
+  Brand               Brand?             @relation(fields: [brandId], references: [id])
+  brandId             String?            @db.ObjectId
+  Supplier            Supplier?          @relation(fields: [supplierId], references: [id])
+  supplierId          String?            @db.ObjectId
+  ProductCollection   ProductCollection? @relation(fields: [productCollectionId], references: [id])
+  productCollectionId String?            @db.ObjectId
 }
 
 // Bảng đơn hàng (Order)
@@ -67,7 +74,9 @@ model Order {
   createdAt DateTime @default(now()) // Ngày tạo
   updatedAt DateTime @updatedAt // Ngày cập nhật
 
-  orderItems OrderItem[] // Danh sách các mục trong đơn hàng
+  orderItems         OrderItem[] // Danh sách các mục trong đơn hàng
+  OrderStatusHistory OrderStatusHistory[]
+  Shipping           Shipping[]
 }
 
 // Bảng chi tiết đơn hàng (OrderItem)
@@ -143,6 +152,12 @@ model Review {
   createdAt DateTime @default(now()) // Ngày tạo
 }
 
+//Bảng Navbar
+model Navbar {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+}
+
 // Bảng thương hiệu (Brand)
 model Brand {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -173,16 +188,97 @@ model Policy {
   content String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 // Bảng tin tức công nghệ (TechnologyNews)
 model TechnologyNews {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String
-  imageUrl  String
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  content     String
+  imageUrl    String?
+
   createdAt DateTime @default(now())
 }
 
-// Các bảng khác có thể bổ sung tương tự theo cấu trúc và quy tắc tương tự
+// Bảng banner (Banner)
+model Banner {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  imageUrl String
+  link     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Bảng xuất xứ (Origin)
+model Origin {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  country String
+
+  createdAt DateTime @default(now())
+}
+
+// Bảng khuyến mãi (Promotion)
+model Promotion {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  discount    Float
+
+  createdAt DateTime @default(now())
+}
+
+// Bảng lịch sử trạng thái đơn hàng (OrderStatusHistory)
+model OrderStatusHistory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id])
+  status    String
+  timestamp DateTime @default(now())
+}
+
+// Bảng nhà cung cấp (Supplier)
+model Supplier {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  contact  String
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Bảng vận chuyển (Shipping)
+model Shipping {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String  @db.ObjectId
+  order      Order   @relation(fields: [orderId], references: [id])
+  method     String
+  status     String  @default("PENDING")
+  trackingId String?
+
+  createdAt DateTime @default(now())
+}
+
+// Bảng thông báo (Notification)
+model Notification {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String  @db.ObjectId
+  user    User    @relation(fields: [userId], references: [id])
+  content String
+  read    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+// Bảng bộ sưu tập sản phẩm (ProductCollection)
+model ProductCollection {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
