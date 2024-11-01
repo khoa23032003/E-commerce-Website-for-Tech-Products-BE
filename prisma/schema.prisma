@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js" // Khai báo client Prisma
+}
+
+datasource db {
+  provider = "mongodb" // Sử dụng MongoDB làm nguồn dữ liệu
+  url      = env("DATABASE_URL") // URL của cơ sở dữ liệu sẽ được lưu trong biến môi trường
+}
+
+// Bảng người dùng (User)
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  email     String   @unique // Email phải là duy nhất
+  password  String // Mật khẩu của người dùng
+  name      String // Tên của người dùng
+  role      String   @default("CUSTOMER") // Vai trò, mặc định là "CUSTOMER"
+  createdAt DateTime @default(now()) // Ngày tạo, tự động lấy thời gian hiện tại
+  updatedAt DateTime @updatedAt // Ngày cập nhật, tự động cập nhật khi thay đổi
+
+  orders     Order[] // Danh sách đơn hàng của người dùng
+  reviews    Review[] // Danh sách đánh giá của người dùng
+  cart       Cart? // Giỏ hàng của người dùng
+  wishlist   Wishlist? // Danh sách yêu thích của người dùng
+  addresses  Address[] // Địa chỉ của người dùng
+}
+
+// Bảng danh mục sản phẩm (Category)
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  name      String   @unique // Tên danh mục phải là duy nhất
+  products  Product[] // Danh sách sản phẩm thuộc danh mục
+
+  createdAt DateTime @default(now()) // Ngày tạo
+  updatedAt DateTime @updatedAt // Ngày cập nhật
+}
+
+// Bảng sản phẩm (Product)
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  name        String // Tên sản phẩm
+  description String // Mô tả sản phẩm
+  price       Float // Giá sản phẩm
+  imageUrl    String // URL hình ảnh của sản phẩm
+  stock       Int      @default(0) // Số lượng sản phẩm trong kho, mặc định là 0
+  categoryId  String   @db.ObjectId // ID danh mục sản phẩm
+  category    Category @relation(fields: [categoryId], references: [id]) // Liên kết đến danh mục
+
+  reviews       Review[] // Danh sách đánh giá
+  orderItems    OrderItem[] // Danh sách các mục đơn hàng
+  cartItems     CartItem[] // Danh sách các mục trong giỏ hàng
+  wishlistItems Wishlist? // Liên kết đến danh sách yêu thích
+
+  createdAt DateTime @default(now()) // Ngày tạo
+  updatedAt DateTime @updatedAt // Ngày cập nhật
+}
+
+// Bảng đơn hàng (Order)
+model Order {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId    String   @db.ObjectId // ID người dùng
+  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  status    String   @default("PENDING") // Trạng thái đơn hàng, mặc định là "PENDING"
+  total     Float // Tổng tiền đơn hàng
+  payment   Payment? // Phương thức thanh toán
+  createdAt DateTime @default(now()) // Ngày tạo
+  updatedAt DateTime @updatedAt // Ngày cập nhật
+
+  orderItems OrderItem[] // Danh sách các mục trong đơn hàng
+}
+
+// Bảng chi tiết đơn hàng (OrderItem)
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  orderId   String   @db.ObjectId // ID đơn hàng
+  order     Order    @relation(fields: [orderId], references: [id]) // Liên kết đến đơn hàng
+  productId String   @db.ObjectId // ID sản phẩm
+  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  quantity  Int // Số lượng sản phẩm trong đơn hàng
+  price     Float // Giá của sản phẩm tại thời điểm đặt hàng
+}
+
+// Bảng giỏ hàng (Cart)
+model Cart {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId String   @unique @db.ObjectId // ID người dùng, phải là duy nhất
+  user   User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  items  CartItem[] // Danh sách các mục trong giỏ hàng
+}
+
+// Bảng mục trong giỏ hàng (CartItem)
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  cartId    String   @db.ObjectId // ID giỏ hàng
+  cart      Cart     @relation(fields: [cartId], references: [id]) // Liên kết đến giỏ hàng
+  productId String   @db.ObjectId // ID sản phẩm
+  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  quantity  Int // Số lượng sản phẩm trong giỏ hàng
+}
+
+// Bảng thanh toán (Payment)
+model Payment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  orderId   String   @unique @db.ObjectId // ID đơn hàng, phải là duy nhất
+  order     Order    @relation(fields: [orderId], references: [id]) // Liên kết đến đơn hàng
+  method    String // Phương thức thanh toán
+  status    String   @default("PENDING") // Trạng thái thanh toán, mặc định là "PENDING"
+  amount    Float // Số tiền thanh toán
+  createdAt DateTime @default(now()) // Ngày tạo
+}
+
+// Bảng địa chỉ (Address)
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId    String   @db.ObjectId // ID người dùng
+  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  street    String // Đường
+  city      String // Thành phố
+  state     String // Bang hoặc tỉnh
+  postalCode String // Mã bưu điện
+  country   String // Quốc gia
+}
+
+// Bảng danh sách yêu thích (Wishlist)
+model Wishlist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId    String   @unique @db.ObjectId // ID người dùng, phải là duy nhất
+  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  productId String   @unique @db.ObjectId // ID sản phẩm, phải là duy nhất
+  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+}
+
+// Bảng đánh giá (Review)
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId    String   @db.ObjectId // ID người dùng
+  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  productId String   @db.ObjectId // ID sản phẩm
+  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  rating    Int // Đánh giá bằng số điểm
+  comment   String // Bình luận của người dùng
+  createdAt DateTime @default(now()) // Ngày tạo
+}
