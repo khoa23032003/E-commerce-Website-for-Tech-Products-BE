@@ -17,18 +17,18 @@ model User {
   createdAt DateTime @default(now()) // Ngày tạo, tự động lấy thời gian hiện tại
   updatedAt DateTime @updatedAt // Ngày cập nhật, tự động cập nhật khi thay đổi
 
-  orders     Order[] // Danh sách đơn hàng của người dùng
-  reviews    Review[] // Danh sách đánh giá của người dùng
-  cart       Cart? // Giỏ hàng của người dùng
-  wishlist   Wishlist? // Danh sách yêu thích của người dùng
-  addresses  Address[] // Địa chỉ của người dùng
+  orders    Order[] // Danh sách đơn hàng của người dùng
+  reviews   Review[] // Danh sách đánh giá của người dùng
+  cart      Cart? // Giỏ hàng của người dùng
+  wishlist  Wishlist? // Danh sách yêu thích của người dùng
+  addresses Address[] // Địa chỉ của người dùng
 }
 
 // Bảng danh mục sản phẩm (Category)
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  name      String   @unique // Tên danh mục phải là duy nhất
-  products  Product[] // Danh sách sản phẩm thuộc danh mục
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  name     String    @unique // Tên danh mục phải là duy nhất
+  products Product[] // Danh sách sản phẩm thuộc danh mục
 
   createdAt DateTime @default(now()) // Ngày tạo
   updatedAt DateTime @updatedAt // Ngày cập nhật
@@ -52,6 +52,8 @@ model Product {
 
   createdAt DateTime @default(now()) // Ngày tạo
   updatedAt DateTime @updatedAt // Ngày cập nhật
+  Brand     Brand?   @relation(fields: [brandId], references: [id])
+  brandId   String?  @db.ObjectId
 }
 
 // Bảng đơn hàng (Order)
@@ -70,30 +72,30 @@ model Order {
 
 // Bảng chi tiết đơn hàng (OrderItem)
 model OrderItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  orderId   String   @db.ObjectId // ID đơn hàng
-  order     Order    @relation(fields: [orderId], references: [id]) // Liên kết đến đơn hàng
-  productId String   @db.ObjectId // ID sản phẩm
-  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  orderId   String  @db.ObjectId // ID đơn hàng
+  order     Order   @relation(fields: [orderId], references: [id]) // Liên kết đến đơn hàng
+  productId String  @db.ObjectId // ID sản phẩm
+  product   Product @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
   quantity  Int // Số lượng sản phẩm trong đơn hàng
   price     Float // Giá của sản phẩm tại thời điểm đặt hàng
 }
 
 // Bảng giỏ hàng (Cart)
 model Cart {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  userId String   @unique @db.ObjectId // ID người dùng, phải là duy nhất
-  user   User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId String     @unique @db.ObjectId // ID người dùng, phải là duy nhất
+  user   User       @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
   items  CartItem[] // Danh sách các mục trong giỏ hàng
 }
 
 // Bảng mục trong giỏ hàng (CartItem)
 model CartItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  cartId    String   @db.ObjectId // ID giỏ hàng
-  cart      Cart     @relation(fields: [cartId], references: [id]) // Liên kết đến giỏ hàng
-  productId String   @db.ObjectId // ID sản phẩm
-  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  cartId    String  @db.ObjectId // ID giỏ hàng
+  cart      Cart    @relation(fields: [cartId], references: [id]) // Liên kết đến giỏ hàng
+  productId String  @db.ObjectId // ID sản phẩm
+  product   Product @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
   quantity  Int // Số lượng sản phẩm trong giỏ hàng
 }
 
@@ -110,23 +112,23 @@ model Payment {
 
 // Bảng địa chỉ (Address)
 model Address {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  userId    String   @db.ObjectId // ID người dùng
-  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
-  street    String // Đường
-  city      String // Thành phố
-  state     String // Bang hoặc tỉnh
+  id         String @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId     String @db.ObjectId // ID người dùng
+  user       User   @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  street     String // Đường
+  city       String // Thành phố
+  state      String // Bang hoặc tỉnh
   postalCode String // Mã bưu điện
-  country   String // Quốc gia
+  country    String // Quốc gia
 }
- 
+
 // Bảng danh sách yêu thích (Wishlist)
 model Wishlist {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  userId    String   @unique @db.ObjectId // ID người dùng, phải là duy nhất
-  user      User     @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
-  productId String   @unique @db.ObjectId // ID sản phẩm, phải là duy nhất
-  product   Product  @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
+  userId    String  @unique @db.ObjectId // ID người dùng, phải là duy nhất
+  user      User    @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  productId String  @unique @db.ObjectId // ID sản phẩm, phải là duy nhất
+  product   Product @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
 }
 
 // Bảng đánh giá (Review)
@@ -141,19 +143,11 @@ model Review {
   createdAt DateTime @default(now()) // Ngày tạo
 }
 
-//Bảng Navbar
-model Navbar{
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String   @unique
-
-}
-
-
-/ Bảng thương hiệu (Brand)
+// Bảng thương hiệu (Brand)
 model Brand {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String   @unique
-  products  Product[]
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,12 +155,12 @@ model Brand {
 
 // Bảng phụ kiện (Accessory)
 model Accessory {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
   imageUrl    String
-  stock       Int      @default(0)
+  stock       Int    @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,100 +168,21 @@ model Accessory {
 
 // Bảng chính sách (Policy)
 model Policy {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  content String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Bảng tin tức công nghệ (TechnologyNews)
 model TechnologyNews {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  content     String
-  imageUrl    String?
-
-  createdAt DateTime @default(now())
-}
-
-// Bảng banner (Banner)
-model Banner {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
-  imageUrl  String
-  link      String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Bảng xuất xứ (Origin)
-model Origin {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  country   String
-
-  createdAt DateTime @default(now())
-}
-
-// Bảng khuyến mãi (Promotion)
-model Promotion {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  discount    Float
-
-  createdAt DateTime @default(now())
-}
-
-// Bảng lịch sử trạng thái đơn hàng (OrderStatusHistory)
-model OrderStatusHistory {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderId   String   @db.ObjectId
-  order     Order    @relation(fields: [orderId], references: [id])
-  status    String
-  timestamp DateTime @default(now())
-}
-
-// Bảng nhà cung cấp (Supplier)
-model Supplier {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  contact   String
-  products  Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Bảng vận chuyển (Shipping)
-model Shipping {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String   @db.ObjectId
-  order      Order    @relation(fields: [orderId], references: [id])
-  method     String
-  status     String   @default("PENDING")
-  trackingId String?
-  createdAt  DateTime @default(now())
-}
-
-// Bảng thông báo (Notification)
-model Notification {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id])
   content   String
-  read      Boolean  @default(false)
+  imageUrl  String
   createdAt DateTime @default(now())
 }
 
-// Bảng bộ sưu tập sản phẩm (ProductCollection)
-model ProductCollection {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  products  Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// Các bảng khác có thể bổ sung tương tự theo cấu trúc và quy tắc tương tự
