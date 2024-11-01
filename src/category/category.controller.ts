@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { Category } from '@prisma/client';
+
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -19,7 +19,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @ApiTags('categories')
 @Controller('categories')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) { }
 
   // Create Category
   // category.controller.ts
@@ -75,7 +75,7 @@ export class CategoryController {
   @Get('search/:name')
   async getCategoryByName(
     @Param('name') name: string,
-  ): Promise<{ success: boolean; data: Category[] | string }> {
+  ) {
     return this.categoryService.getCategoryByName(name);
   }
 
