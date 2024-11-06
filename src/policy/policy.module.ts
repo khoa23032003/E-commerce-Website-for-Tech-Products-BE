@@ -9,4 +9,4 @@ import { PrismaClient } from '@prisma/client';
   providers: [PolicyService, PrismaClient],
 
 })
-export class PolicyModule {}
+export class PolicyModule { }
