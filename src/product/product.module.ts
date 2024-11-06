@@ -14,4 +14,4 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [ProductController],
   providers: [ProductService, CloudinaryProvider, PrismaClient],
 })
-export class ProductModule {}
+export class ProductModule { }
