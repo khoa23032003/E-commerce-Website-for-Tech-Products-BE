@@ -15,68 +15,84 @@ import { CreateAccessoryDto } from './dto/create-accessory.dto';
 import { UpdateAccessoryDto } from './dto/update-accessory.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('accessories')
 @Controller('accessory')
 export class AccessoryController {
   constructor(
     private readonly accessoryService: AccessoryService,
-    private readonly cloudinaryProvider: CloudinaryProvider, // Provider dùng để upload ảnh lên Cloudinary
-  ) {}
+    private readonly cloudinaryProvider: CloudinaryProvider, // Provider for uploading images to Cloudinary
+  ) { }
 
-  // API thêm mới một phụ kiện (accessory)
+  // Create a new accessory
+  @ApiOperation({ summary: 'Create a new accessory' })
+  @ApiResponse({ status: 201, description: 'Accessory created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
   @Post()
-  @UseInterceptors(FileInterceptor('imageUrl')) // Sử dụng FileInterceptor để chặn và xử lý file tải lên từ trường 'imageUrl'
+  @UseInterceptors(FileInterceptor('imageUrl')) // FileInterceptor for handling uploaded files
   async create(
-    @Body() createAccessoryDto: CreateAccessoryDto, // Nhận thông tin từ body của request
-    @UploadedFile() file: Express.Multer.File, // Nhận file tải lên, sử dụng Multer để quản lý file
+    @Body() createAccessoryDto: CreateAccessoryDto, // Accessory data from request body
+    @UploadedFile() file: Express.Multer.File, // Uploaded file (image)
   ) {
-    // Kiểm tra xem file có được tải lên hay không
     if (!file) {
-      throw new BadRequestException('File hình ảnh là bắt buộc'); // Nếu không có file, báo lỗi
+      throw new BadRequestException('File image is required');
     }
 
-    // Tải file lên Cloudinary và nhận kết quả trả về (uploadResult chứa thông tin ảnh)
+    // Upload image to Cloudinary
     const uploadResult = await this.cloudinaryProvider.uploadImage(file);
 
-    // Sau khi tải lên thành công, đường dẫn URL của ảnh sẽ được lưu vào CSDL thông qua service
+    // Return the created accessory with the uploaded image URL
     return this.accessoryService.create(
-      createAccessoryDto, // Dữ liệu phụ kiện nhận từ body (name, description, price, v.v.)
-      uploadResult.secure_url, // Đường dẫn URL của ảnh sau khi đã được upload thành công
+      createAccessoryDto, // Accessory details
+      uploadResult.secure_url, // Image URL
     );
   }
 
+  // Get all accessories
+  @ApiOperation({ summary: 'Get all accessories' })
+  @ApiResponse({ status: 200, description: 'Fetched all accessories successfully' })
   @Get()
   findAll() {
-    return this.accessoryService.findAll(); // Trả về tất cả các phụ kiện
+    return this.accessoryService.findAll(); // Fetch all accessories
   }
 
+  // Get a specific accessory by ID
+  @ApiOperation({ summary: 'Get accessory by ID' })
+  @ApiResponse({ status: 200, description: 'Fetched accessory by ID' })
+  @ApiResponse({ status: 404, description: 'Accessory not found' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.accessoryService.findOne(id); // Trả về phụ kiện dựa trên ID
+    return this.accessoryService.findOne(id); // Fetch accessory by ID
   }
 
-  // API cập nhật thông tin phụ kiện (accessory)
+  // Update an existing accessory
+  @ApiOperation({ summary: 'Update an existing accessory' })
+  @ApiResponse({ status: 200, description: 'Accessory updated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('imageUrl')) // Tương tự, sử dụng FileInterceptor để xử lý file tải lên
+  @UseInterceptors(FileInterceptor('imageUrl')) // FileInterceptor for handling uploaded files
   async update(
-    @Param('id') id: string, // Lấy ID của phụ kiện cần cập nhật
-    @Body() updateAccessoryDto: UpdateAccessoryDto, // Nhận dữ liệu cập nhật từ body của request
-    @UploadedFile() file?: Express.Multer.File, // File tải lên không bắt buộc
+    @Param('id') id: string, // Accessory ID for update
+    @Body() updateAccessoryDto: UpdateAccessoryDto, // Accessory update details
+    @UploadedFile() file?: Express.Multer.File, // Optional file for updating image
   ) {
     let imageUrl: string | undefined;
 
-    // Nếu có file ảnh được tải lên
     if (file) {
-      const uploadResult = await this.cloudinaryProvider.uploadImage(file); // Tải ảnh mới lên Cloudinary
-      imageUrl = uploadResult.secure_url; // Lưu URL của ảnh mới
+      const uploadResult = await this.cloudinaryProvider.uploadImage(file); // Upload new image if provided
+      imageUrl = uploadResult.secure_url;
     }
 
-    // Cập nhật thông tin phụ kiện, bao gồm URL ảnh mới nếu có
-    return this.accessoryService.update(id, updateAccessoryDto, imageUrl);
+    return this.accessoryService.update(id, updateAccessoryDto, imageUrl); // Update accessory
   }
 
+  // Delete an accessory by ID
+  @ApiOperation({ summary: 'Delete accessory by ID' })
+  @ApiResponse({ status: 200, description: 'Accessory deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Accessory not found' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.accessoryService.remove(id); // Xóa phụ kiện dựa trên ID
+    return this.accessoryService.remove(id); // Delete accessory by ID
   }
 }
