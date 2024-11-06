@@ -12,7 +12,13 @@ import { BrandModule } from './brand/brand.module';
 import { CategoryModule } from './category/category.module';
 
 @Module({
+
   imports: [ProductModule, CategoryModule, CartModule, NavbarModule, AccessoryModule, OriginModule, SupplierModule, BrandModule],
+
+
+  imports: [ProductModule, CategoryModule, CartModule, NavbarModule, PolicyModule, BrandModule],
+
+
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
 })
