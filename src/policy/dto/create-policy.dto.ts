@@ -1,3 +1,4 @@
+
 import { IsEmpty, IsString } from "class-validator";
 
 export class CreatePolicyDto {
@@ -8,4 +9,5 @@ export class CreatePolicyDto {
 
     @IsString()
     content: string
+
 }

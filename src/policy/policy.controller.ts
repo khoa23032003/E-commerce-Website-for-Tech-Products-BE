@@ -1,3 +1,4 @@
+
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { PolicyService } from './policy.service';
 import { CreatePolicyDto } from './dto/create-policy.dto';
@@ -10,6 +11,7 @@ export class PolicyController {
   @Post()
   create(@Body() createPolicyDto: CreatePolicyDto) {
     return this.policyService.create(createPolicyDto);
+
   }
 
   @Get()
@@ -19,16 +21,22 @@ export class PolicyController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+
     return this.policyService.findOne(id);
+
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePolicyDto: UpdatePolicyDto) {
+
     return this.policyService.update(id, updatePolicyDto);
+
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+
     return this.policyService.remove(id);
+
   }
 }

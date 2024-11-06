@@ -1,14 +1,18 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePolicyDto } from './dto/create-policy.dto';
 import { UpdatePolicyDto } from './dto/update-policy.dto';
 import { PrismaClient } from '@prisma/client';
+
 
 @Injectable()
 export class PolicyService {
   private prisma = new PrismaClient();
 
 
+
   //Tạo chính sách
+
   async create(createPolicyDto: CreatePolicyDto) {
     const policy = await this.prisma.policy.create({
       data: createPolicyDto,
@@ -55,5 +59,6 @@ export class PolicyService {
       success: true,
       data: deletedPolicy ?? 'Xóa thương hiệu không thành công',
     };
+
   }
 }
