@@ -7,10 +7,12 @@ import { CategoryModule } from './category/category.module';
 import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { CartModule } from './cart/cart.module';
 import { NavbarModule } from './navbar/navbar.module';
-import { PolicyModule } from './policy/policy.module';
+import { AccessoryModule } from './accessory/accessory.module';
+import { OriginModule } from './origin/origin.module';
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
-  imports: [ProductModule, CategoryModule, CartModule, NavbarModule, PolicyModule],
+  imports: [ProductModule, CategoryModule, CartModule, NavbarModule, AccessoryModule, OriginModule, SupplierModule],
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
 })
