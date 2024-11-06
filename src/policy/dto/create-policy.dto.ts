@@ -1,13 +1,10 @@
-
-import { IsEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePolicyDto {
-    @IsEmpty()
-    @IsString()
-    title: string
+    @IsNotEmpty({ message: 'Title is required' })
+    @IsString({ message: 'Title must be a string' })
+    title: string;
 
-
-    @IsString()
-    content: string
-
+    @IsString({ message: 'Content must be a string' })
+    content: string;
 }
