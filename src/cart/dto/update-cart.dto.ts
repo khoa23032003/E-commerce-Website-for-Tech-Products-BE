@@ -1,3 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
+
+// Data to update a cart item
 export class UpdateCartItemDto {
-  quantity: number;
+  @ApiProperty({ description: 'Product ID' })
+  productId?: string;
+
+  @ApiProperty({ description: 'Quantity of the product' })
+  quantity?: number;
 }
