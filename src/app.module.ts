@@ -10,16 +10,24 @@ import { OriginModule } from './origin/origin.module';
 import { SupplierModule } from './supplier/supplier.module';
 import { BrandModule } from './brand/brand.module';
 import { CategoryModule } from './category/category.module';
+import { PolicyModule } from './policy/policy.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
-
-  imports: [ProductModule, CategoryModule, CartModule, NavbarModule, AccessoryModule, OriginModule, SupplierModule, BrandModule],
-
-
-  imports: [ProductModule, CategoryModule, CartModule, NavbarModule, PolicyModule, BrandModule],
-
+  imports: [
+    ProductModule,
+    CategoryModule,
+    CartModule,
+    NavbarModule,
+    AccessoryModule,
+    OriginModule,
+    SupplierModule,
+    BrandModule,
+    PolicyModule,
+    BannerModule,
+  ],
 
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
 })
-export class AppModule { }
+export class AppModule {}
