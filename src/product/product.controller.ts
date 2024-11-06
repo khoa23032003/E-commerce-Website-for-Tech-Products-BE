@@ -18,7 +18,7 @@ export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly cloudinaryProvider: CloudinaryProvider,
-  ) {}
+  ) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('imageUrl'))
