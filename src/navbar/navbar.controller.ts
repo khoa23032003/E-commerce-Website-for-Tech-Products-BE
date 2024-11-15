@@ -10,14 +10,27 @@ import {
 import { NavbarService } from './navbar.service';
 import { CreateNavbarDto } from './dto/create-navbar.dto';
 import { UpdateNavbarDto } from './dto/update-navbar.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('navbar')
 @Controller('navbar')
 export class NavbarController {
-  constructor(private readonly navbarService: NavbarService) { }
+  constructor(private readonly navbarService: NavbarService) {}
 
   @ApiOperation({ summary: 'Create a new navbar item' })
+  // TẠO TRƯỜNG NHẬP DỮ LIỆU
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description:
+      'The data for updating a major and its details, including selective image updates',
+    type: UpdateNavbarDto, // Ensure you have an UpdateMajorDto for this
+  })
   @ApiResponse({ status: 201, description: 'Navbar item created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @Post()
@@ -26,7 +39,10 @@ export class NavbarController {
   }
 
   @ApiOperation({ summary: 'Retrieve all navbar items' })
-  @ApiResponse({ status: 200, description: 'Navbar items retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Navbar items retrieved successfully',
+  })
   @Get()
   findAll() {
     return this.navbarService.findAll();
