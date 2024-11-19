@@ -156,7 +156,9 @@ model Review {
 model Navbar {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
-  link String
+
+  link String 
+
 }
 
 // Bảng thương hiệu (Brand)
