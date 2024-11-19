@@ -14,6 +14,7 @@ model User {
   password  String // Mật khẩu của người dùng
   name      String // Tên của người dùng
   role      String   @default("CUSTOMER") // Vai trò, mặc định là "CUSTOMER"
+  refresh_token String?
   createdAt DateTime @default(now()) // Ngày tạo, tự động lấy thời gian hiện tại
   updatedAt DateTime @updatedAt // Ngày cập nhật, tự động cập nhật khi thay đổi
 
