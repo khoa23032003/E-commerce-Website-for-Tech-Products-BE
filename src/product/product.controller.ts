@@ -20,7 +20,7 @@ export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly cloudinaryProvider: CloudinaryProvider,
-  ) {}
+  ) { }
 
   // Create a new product with image upload
   @ApiOperation({ summary: 'Create a new product' })
@@ -55,7 +55,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Product not found' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   // Delete a product by ID

@@ -9,7 +9,7 @@ import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
 export class ProductService {
   prisma = new PrismaClient();
 
-  constructor(private cloudinaryService: CloudinaryProvider) {}
+  constructor(private cloudinaryService: CloudinaryProvider) { }
 
   async create(createProductDto: CreateProductDto, imageUrl: string) {
     const newProduct = await this.prisma.product.create({
@@ -30,9 +30,22 @@ export class ProductService {
     return this.prisma.product.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+
+    if (!product) {
+      return {
+        success: false,
+        message: 'Sản phẩm không tồn tại',
+      };
+    }
+
+    return {
+      success: true,
+      data: product, // Trả về dữ liệu sản phẩm
+    };
   }
+
 
   update(id: number, updateProductDto: UpdateCategoryDto) {
     return `This action updates a #${id} product`;
