@@ -1,77 +1,25 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt'; // Sử dụng JwtService
-
-import { PrismaClient } from '@prisma/client';
-import { LoginUserDto } from './dto/login-user.dto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  // private users: Model<User> // Mảng lưu trữ người dùng
-  private prisma = new PrismaClient();
-
-  constructor(private jwtService: JwtService) { } // Inject JwtService
-
-
-  // async create(createUserDto: CreateUserDto) {
-  //   // Thực hiện logic tạo người dùng
-  //   return await this.prisma.user.create({
-  //     data: {
-  //       email: createUserDto.email,
-  //       password: createUserDto.password, // Mã hóa mật khẩu nếu cần
-  //       name: createUserDto.name,
-  //     },
-  //   });
-  // }
+  constructor(private prisma: PrismaService) {}
 
   // Đăng ký người dùng
-  async register(createUserDto: CreateUserDto) {
-    // Kiểm tra xem email đã tồn tại chưa
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: createUserDto.email },
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({
+      data,
     });
-    if (existingUser) {
-      throw new ConflictException('Email đã được sử dụng');
-    }
-
-    // Mã hóa mật khẩu với bcrypt
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-
-    // Tạo người dùng mới và lưu vào cơ sở dữ liệu
-    const newUser = await this.prisma.user.create({
-      data: {
-        email: createUserDto.email,
-        password: hashedPassword,
-        name: createUserDto.name,
-
-      },
-    });
-
-    return {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
-      password: newUser.password,
-      role: newUser.role,
-    }; // Trả về thông tin người dùng đã đăng ký, không bao gồm mật khẩu
   }
 
-  // Đăng nhập
-  async validateUser(email: string, password: string): Promise<any> {
-    // Tìm người dùng theo email
-    const user = await this.prisma.user.findUnique({
+  // Tìm người dùng qua email
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
       where: { email },
     });
-
-    // So sánh mật khẩu đã mã hóa
-    if (user && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
   }
+
 
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
@@ -93,21 +41,7 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  async findOne(id: string) {
-    const product = await this.prisma.product.findUnique({ where: { id } });
-
-    if (!product) {
-      return {
-        success: false,
-        message: 'Sản phẩm không tồn tại',
-      };
-    }
-
-    return {
-      success: true,
-      data: product, // Trả về dữ liệu sản phẩm
-    };
-  }
+ 
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
@@ -115,5 +49,13 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+
+  // Tìm người dùng qua ID
+  async findById(id: string): Promise<User | null> {
+    console.log('id', id);
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+
   }
 }
