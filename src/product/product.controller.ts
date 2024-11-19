@@ -54,8 +54,8 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Product details found' })
   @ApiResponse({ status: 404, description: 'Product not found' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return this.productService.findOne(id); // Gọi đúng method từ service
   }
 
   // Delete a product by ID

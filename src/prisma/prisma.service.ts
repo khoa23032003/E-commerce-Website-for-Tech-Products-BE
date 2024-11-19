@@ -1,11 +1,21 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  private userId: string | null = null;
+  // Method to set user context
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  // Method to get current user
+  private getCurrentUser() {
+    return this.userId;
+  }
+
   async onModuleInit() {
     // Request Timing and Performance Monitoring
     this.$use(async (params, next) => {
@@ -19,22 +29,41 @@ export class PrismaService
       return result;
     });
 
-    // Audit logs
-    this.$use(async (params, next) => {
-      if (['create', 'update', 'delete'].includes(params.action)) {
-        const result = await next(params);
+    // // Audit logs
+    // this.$use(async (params, next) => {
+    //   if (
+    //     ['create', 'update', 'delete'].includes(params.action) &&
+    //     params.model !== 'AuditLog'
+    //   ) {
+    //     let dataToLog = params.args.data || '';
 
-        console.log(`[${params.action.toUpperCase()}] Model: ${params.model}`);
-        console.log('Data:', params.args.data);
+    //     if (params.action === 'delete') {
+    //       const record = await this[params.model.toLowerCase()].findUnique({
+    //         where: params.args.where,
+    //       });
+    //       dataToLog = record || params.args.where || '';
+    //     }
 
-        // Optionally, store logs in a logging service or database
-        // e.g., await prisma.auditLog.create({ data: { model: params.model, action: params.action, data: JSON.stringify(params.args) }});
+    //     const result = await next(params);
 
-        return result;
-      }
+    //     console.log(`[${params.action.toUpperCase()}] Model: ${params.model}`);
+    //     console.log('Data:', dataToLog);
 
-      return next(params);
-    });
+    //     // Store logs in the AuditLog model using the stored userId
+    //     // await this.auditLog.create({
+    //     //   data: {
+    //     //     model: params.model,
+    //     //     action: params.action,
+    //     //     data: dataToLog,
+    //     //     userId: this.getCurrentUser(),
+    //     //   },
+    //     // });
+
+    //     return result;
+    //   }
+
+    //   return next(params);
+    // });
 
     // Rate limiting
     const rateLimit = new Map<string, { count: number; lastRequest: number }>();

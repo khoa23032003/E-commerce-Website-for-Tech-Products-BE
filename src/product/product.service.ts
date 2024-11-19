@@ -30,8 +30,10 @@ export class ProductService {
     return this.prisma.product.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    return await this.prisma.product.findUnique({
+      where: { id }, // Sử dụng đúng cú pháp cho Prisma
+    });
   }
 
   update(id: number, updateProductDto: UpdateCategoryDto) {
