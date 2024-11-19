@@ -93,8 +93,20 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+
+    if (!product) {
+      return {
+        success: false,
+        message: 'Sản phẩm không tồn tại',
+      };
+    }
+
+    return {
+      success: true,
+      data: product, // Trả về dữ liệu sản phẩm
+    };
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
