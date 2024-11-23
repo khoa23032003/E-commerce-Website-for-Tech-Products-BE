@@ -14,7 +14,7 @@ import { CategoryService } from './category.service';
 
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -26,6 +26,11 @@ export class CategoryController {
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'Tạo thành công danh mục' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Accessory data with an image file',
+    type: CreateCategoryDto
+  })
   @Post()
   async createCategory(@Body() data: CreateCategoryDto) {
     // Trước khi khởi tạo category, kiểm tra xem tên đã được khởi tạo từ trước hay chưa
@@ -79,6 +84,16 @@ export class CategoryController {
     return this.categoryService.getCategoryByName(name);
   }
 
+  //Update
+  @ApiOperation({ summary: 'Update a new user' })
+  @ApiResponse({ status: 201, description: 'Update thành công danh mục' })
+  @ApiResponse({ status: 400, description: 'Invalid input.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description:
+      'The data for updating a major and its details, including selective image updates',
+    type: UpdateCategoryDto, // Ensure you have an UpdateMajorDto for this
+  })
   @Put('update/:id')
   async updateDocument(
     @Param('id') id: string,

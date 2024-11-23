@@ -9,7 +9,7 @@ import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
 export class ProductService {
   prisma = new PrismaClient();
 
-  constructor(private cloudinaryService: CloudinaryProvider) {}
+  constructor(private cloudinaryService: CloudinaryProvider) { }
 
   async create(createProductDto: CreateProductDto, imageUrl: string) {
     const newProduct = await this.prisma.product.create({
