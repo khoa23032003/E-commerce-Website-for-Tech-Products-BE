@@ -21,7 +21,7 @@ import {
 @ApiTags('navbar')
 @Controller('navbar')
 export class NavbarController {
-  constructor(private readonly navbarService: NavbarService) {}
+  constructor(private readonly navbarService: NavbarService) { }
 
   @ApiOperation({ summary: 'Create a new navbar item' })
   // TẠO TRƯỜNG NHẬP DỮ LIỆU
@@ -29,7 +29,7 @@ export class NavbarController {
   @ApiBody({
     description:
       'The data for updating a major and its details, including selective image updates',
-    type: UpdateNavbarDto, // Ensure you have an UpdateMajorDto for this
+    type: CreateNavbarDto, // Ensure you have an UpdateMajorDto for this
   })
   @ApiResponse({ status: 201, description: 'Navbar item created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
@@ -59,6 +59,12 @@ export class NavbarController {
   @ApiOperation({ summary: 'Update navbar item by ID' })
   @ApiResponse({ status: 200, description: 'Navbar item updated successfully' })
   @ApiResponse({ status: 404, description: 'Navbar item not found' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description:
+      'The data for updating a major and its details, including selective image updates',
+    type: CreateNavbarDto, // Ensure you have an UpdateMajorDto for this
+  })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateNavbarDto: UpdateNavbarDto) {
     return this.navbarService.update(id, updateNavbarDto);

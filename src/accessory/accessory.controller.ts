@@ -15,7 +15,7 @@ import { CreateAccessoryDto } from './dto/create-accessory.dto';
 import { UpdateAccessoryDto } from './dto/update-accessory.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('accessories')
 @Controller('accessory')
@@ -25,15 +25,19 @@ export class AccessoryController {
     private readonly cloudinaryProvider: CloudinaryProvider, // Provider for uploading images to Cloudinary
   ) { }
 
-  // Create a new accessory
   @ApiOperation({ summary: 'Create a new accessory' })
   @ApiResponse({ status: 201, description: 'Accessory created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Accessory data with an image file',
+    type: CreateAccessoryDto
+  })
   @Post()
-  @UseInterceptors(FileInterceptor('imageUrl')) // FileInterceptor for handling uploaded files
+  @UseInterceptors(FileInterceptor('imageUrl'))
   async create(
-    @Body() createAccessoryDto: CreateAccessoryDto, // Accessory data from request body
-    @UploadedFile() file: Express.Multer.File, // Uploaded file (image)
+    @Body() createAccessoryDto: CreateAccessoryDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('File image is required');
@@ -42,10 +46,10 @@ export class AccessoryController {
     // Upload image to Cloudinary
     const uploadResult = await this.cloudinaryProvider.uploadImage(file);
 
-    // Return the created accessory with the uploaded image URL
+    // Create accessory with uploaded image URL
     return this.accessoryService.create(
-      createAccessoryDto, // Accessory details
-      uploadResult.secure_url, // Image URL
+      createAccessoryDto,
+      uploadResult.secure_url,
     );
   }
 
@@ -70,6 +74,7 @@ export class AccessoryController {
   @ApiOperation({ summary: 'Update an existing accessory' })
   @ApiResponse({ status: 200, description: 'Accessory updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
+
   @Patch(':id')
   @UseInterceptors(FileInterceptor('imageUrl')) // FileInterceptor for handling uploaded files
   async update(

@@ -12,7 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('product') // Grouping the routes under the "product" tag in Swagger UI
 @Controller('product')
@@ -20,13 +20,30 @@ export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly cloudinaryProvider: CloudinaryProvider,
-  ) {}
+  ) { }
 
   // Create a new product with image upload
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'Product successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Product data with an image file',
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'Smartphone' },
+        description: { type: 'string', example: 'A high-end smartphone' },
+        price: { type: 'number', example: 999.99 },
+        categoryId: { type: 'string', example: '64c93b81e4893c7b88812345' },
+        imageUrl: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @Post()
   @UseInterceptors(FileInterceptor('imageUrl'))
   async create(
@@ -39,6 +56,7 @@ export class ProductController {
       uploadResult.secure_url,
     );
   }
+
 
   // Get all products
   @ApiOperation({ summary: 'Get all products' })
