@@ -161,10 +161,12 @@ model Review {
 }
 
 //Bảng Navbar
-model Navbar { //k
+model Navbar {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
+
   link String 
+
 }
 
 // Bảng thương hiệu (Brand)
@@ -178,7 +180,7 @@ model Brand {
 }
 
 // Bảng phụ kiện (Accessory)
-model Accessory { //k
+model Accessory {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
@@ -191,7 +193,7 @@ model Accessory { //k
 }
 
 // Bảng chính sách (Policy)
-model Policy { 
+model Policy {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   content String
@@ -200,7 +202,7 @@ model Policy {
 }
 
 // Bảng tin tức công nghệ (TechnologyNews)
-model TechnologyNews { //k
+model TechnologyNews {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
@@ -222,7 +224,7 @@ model Banner {
 }
 
 // Bảng xuất xứ (Origin)
-model Origin { //kh
+model Origin {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   country String
 
@@ -240,7 +242,7 @@ model Promotion {
 }
 
 // Bảng lịch sử trạng thái đơn hàng (OrderStatusHistory)
-model OrderStatusHistory { //kh
+model OrderStatusHistory {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   orderId   String   @db.ObjectId
   order     Order    @relation(fields: [orderId], references: [id])
@@ -260,7 +262,7 @@ model Supplier {
 }
 
 // Bảng vận chuyển (Shipping)
-model Shipping { //kh
+model Shipping {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
   orderId    String  @db.ObjectId
   order      Order   @relation(fields: [orderId], references: [id])
@@ -283,7 +285,7 @@ model Notification {
 }
 
 // Bảng bộ sưu tập sản phẩm (ProductCollection)
-model ProductCollection { //kh
+model ProductCollection {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   products Product[]
