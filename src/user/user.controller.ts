@@ -28,7 +28,9 @@ export class UserController {
   //Đăng ký tài khoản
   @Post()
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+
+    //return this.userService.register(createUserDto);
+
   }
 
 
@@ -49,10 +51,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.userService.findOne(id);
   // }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
