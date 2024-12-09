@@ -44,7 +44,7 @@ export class AuthService {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
-
+    console.log('token: ' + accessToken);
     return { accessToken };
   }
 
@@ -57,5 +57,12 @@ export class AuthService {
         name: true,
       },
     });
+  }
+  verifyToken(token: string): any {
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException('Token không hợp lệ');
+    }
   }
 }

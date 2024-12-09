@@ -46,7 +46,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
     PolicyModule,
     BannerModule,
     UserModule,
-
+    JwtModule,
     PrismaModule,
 
     // JWT Module Configuration
