@@ -89,15 +89,20 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
   quantity  Int // Số lượng sản phẩm trong đơn hàng
   price     Float // Giá của sản phẩm tại thời điểm đặt hàng
+  createdAt DateTime @default(now()) // Ngày tạo
+  updatedAt DateTime @updatedAt // Ngày cập nhật
 }
 
 // Bảng giỏ hàng (Cart)
 model Cart {
-  id     String     @id @default(auto()) @map("_id") @db.ObjectId // ID tự động, kiểu ObjectId của MongoDB
-  userId String     @unique @db.ObjectId // ID người dùng, phải là duy nhất
-  user   User       @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
-  items  CartItem[] // Danh sách các mục trong giỏ hàng
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId // ID tự động
+  userId     String      @unique @db.ObjectId // ID người dùng
+  user       User        @relation(fields: [userId], references: [id]) // Liên kết đến người dùng
+  items      CartItem[]  // Danh sách các mục trong giỏ hàng
+  createdAt  DateTime    @default(now()) // Ngày tạo
+  updatedAt  DateTime    @updatedAt // Ngày cập nhật
 }
+
 
 // Bảng mục trong giỏ hàng (CartItem)
 model CartItem {
@@ -107,6 +112,8 @@ model CartItem {
   productId String  @db.ObjectId // ID sản phẩm
   product   Product @relation(fields: [productId], references: [id]) // Liên kết đến sản phẩm
   quantity  Int // Số lượng sản phẩm trong giỏ hàng
+  createdAt DateTime @default(now()) // Ngày tạo
+  updatedAt DateTime @updatedAt // Ngày cập nhật
 }
 
 // Bảng thanh toán (Payment)

@@ -19,6 +19,7 @@ export class AuthMiddleware implements NestMiddleware {
           secret: process.env.JWT_SECRET,
         });
         req['userId'] = payload.sub;
+        
         console.log(`Authenticated User ID: ${req['userId']}`);
       } else {
         console.warn('No JWT token provided');
