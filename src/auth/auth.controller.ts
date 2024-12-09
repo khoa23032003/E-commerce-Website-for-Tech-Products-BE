@@ -40,16 +40,11 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Đăng nhập thành công' })
   @ApiResponse({ status: 401, description: 'Thông tin đăng nhập sai' })
   async login(
-    @Body() body: LoginDto,
+    @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
-    const userId = req['userId'];
-    const email = req['email'];
-
-    console.log('user: ' + userId);
-    console.log('email: ' + email);
-    return this.authService.login(body.email, body.password, res);
+   
+    return this.authService.login(loginDto, res);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,12 +58,19 @@ export class AuthController {
     if (!token) {
       throw new UnauthorizedException('Bạn chưa đăng nhập');
     }
-
-    const decoded = this.authService.verifyToken(token);
-    if (!decoded || !decoded.sub) {
-      throw new UnauthorizedException('Token không hợp lệ');
-    }
-    const userId = decoded.sub;
+    const userId = req['userId'];
+    console.log('user: ' + userId);
+ 
     return this.authService.getUserInfo(userId);
+  }
+
+  // xóa cookie
+  @Post('logout')
+  @ApiOperation({ summary: 'Đăng xuất' })
+  @ApiResponse({ status: 200, description: 'Đăng xuất thành công' })
+  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('jwt');
+    return { message: 'Đăng xuất thành công' };
   }
 }

@@ -8,7 +8,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { AuthMiddleware } from '../auth/auth.middleware';
 
 // Đọc biến môi trường JWT_SECRET hoặc dùng giá trị mặc định
-const jwtSecret = process.env.JWT_SECRET || 'defaultSecret';
+const jwtSecret = process.env.JWT_SECRET || 'hoangtuan';
 
 @Module({
   imports: [
