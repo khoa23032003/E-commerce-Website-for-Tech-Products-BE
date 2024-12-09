@@ -8,7 +8,11 @@ export class OriginService {
   private prisma = new PrismaClient();
 
   async create(createOriginDto: CreateOriginDto) {
-    const origin = await this.prisma.origin.create({ data: createOriginDto });
+    const origin = await this.prisma.origin.create({
+      data: {
+        country: createOriginDto.country
+      }
+    });
     return {
       success: Boolean(origin),
       data: origin ?? 'Không tạo được đối tượng nguồn',

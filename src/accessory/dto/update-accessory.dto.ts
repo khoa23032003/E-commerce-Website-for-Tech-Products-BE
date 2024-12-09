@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsUrl, Min, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, Min, IsOptional } from 'class-validator';
 
 export class UpdateAccessoryDto {
   @ApiProperty({ description: 'The name of the accessory', required: false })
@@ -18,10 +18,14 @@ export class UpdateAccessoryDto {
   @Min(0, { message: 'Giá phải lớn hơn hoặc bằng 0' })
   price?: number;
 
-  @ApiProperty({ description: 'The image URL of the accessory', required: false })
+  @ApiProperty({
+    description: 'The image file for the accessory (optional)',
+    type: 'string',
+    format: 'binary', // Specify binary for file upload
+    required: false,
+  })
   @IsOptional()
-  @IsUrl({}, { message: 'URL hình ảnh phải hợp lệ' })
-  imageUrl?: string;
+  imageUrl?: string; // Note: This represents the uploaded file, not the URL.
 
   @ApiProperty({ description: 'The stock quantity of the accessory', required: false })
   @IsOptional()

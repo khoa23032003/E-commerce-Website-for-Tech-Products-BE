@@ -23,12 +23,12 @@ export class CategoryController {
 
   // Create Category
   // category.controller.ts
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Create a new category' })
   @ApiResponse({ status: 201, description: 'Tạo thành công danh mục' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
-  @ApiConsumes('multipart/form-data')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBody({
-    description: 'Accessory data with an image file',
+    description: 'Category data with an image file',
     type: CreateCategoryDto
   })
   @Post()
@@ -88,13 +88,12 @@ export class CategoryController {
   @ApiOperation({ summary: 'Update a new user' })
   @ApiResponse({ status: 201, description: 'Update thành công danh mục' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
-  @ApiConsumes('multipart/form-data')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBody({
-    description:
-      'The data for updating a major and its details, including selective image updates',
-    type: UpdateCategoryDto, // Ensure you have an UpdateMajorDto for this
+    description: 'Category data with an image file',
+    type: UpdateCategoryDto
   })
-  @Put('update/:id')
+  @Patch('update/:id')
   async updateDocument(
     @Param('id') id: string,
     @Body() data: UpdateCategoryDto,
