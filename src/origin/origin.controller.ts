@@ -10,17 +10,18 @@ import {
 import { OriginService } from './origin.service';
 import { CreateOriginDto } from './dto/create-origin.dto';
 import { UpdateOriginDto } from './dto/update-origin.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('origin') // Grouping the routes under the "origin" tag in Swagger UI
 @Controller('origin')
 export class OriginController {
-  constructor(private readonly originService: OriginService) {}
+  constructor(private readonly originService: OriginService) { }
 
-  // Create a new origin
   @ApiOperation({ summary: 'Create a new origin' })
   @ApiResponse({ status: 201, description: 'Origin successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
+
+  @ApiBody({ type: CreateOriginDto, description: 'The origin data to be created' })
   @Post()
   create(@Body() createOriginDto: CreateOriginDto) {
     return this.originService.create(createOriginDto);
@@ -39,6 +40,7 @@ export class OriginController {
   @ApiOperation({ summary: 'Get a specific origin by ID' })
   @ApiResponse({ status: 200, description: 'Origin details found' })
   @ApiResponse({ status: 404, description: 'Origin not found' })
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.originService.findOne(id);
@@ -49,6 +51,7 @@ export class OriginController {
   @ApiResponse({ status: 200, description: 'Origin successfully updated' })
   @ApiResponse({ status: 404, description: 'Origin not found' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiBody({ type: CreateOriginDto, description: 'The origin data to be updated' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOriginDto: UpdateOriginDto) {
     return this.originService.update(id, updateOriginDto);

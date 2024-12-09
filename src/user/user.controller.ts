@@ -28,20 +28,22 @@ export class UserController {
   //Đăng ký tài khoản
   @Post()
   async register(@Body() createUserDto: CreateUserDto) {
+
     //return this.userService.register(createUserDto);
-  }
-
-
-  @Post('login')
-  async login(@Body() loginDto: LoginUserDto) {
-
-    const token = await this.userService.login(loginDto);
-    return {
-      message: 'Đăng nhập thành công',
-      accessToken: token,
-    };
 
   }
+
+
+  // @Post('login')
+  // async login(@Body() loginDto: LoginUserDto) {
+
+  //   const token = await this.userService.login(loginDto);
+  //   return {
+  //     message: 'Đăng nhập thành công',
+  //     accessToken: token,
+  //   };
+
+  // }
 
 
   @Get()
@@ -49,10 +51,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    //return this.userService.findOne(id);
-  }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.userService.findOne(id);
+  // }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

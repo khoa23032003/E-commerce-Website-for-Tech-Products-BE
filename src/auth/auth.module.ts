@@ -21,4 +21,4 @@ export const jwtSecret = process.env.JWT_SECRET;
     UserService,
   ],
 })
-export class AuthModule {}
+export class AuthModule { }
