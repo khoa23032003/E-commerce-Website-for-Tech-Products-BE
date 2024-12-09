@@ -12,20 +12,15 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
-      const token =
-        req.cookies?.jwt || req.headers.authorization?.split(' ')[1];
+      const token = req.cookies['jwt'];
       if (token) {
-        const payload = await this.jwtService.verifyAsync(token, {
-          secret: process.env.JWT_SECRET,
-        });
-        req['userId'] = payload.sub;
-        
-        console.log(`Authenticated User ID: ${req['userId']}`);
-      } else {
-        console.warn('No JWT token provided');
+        const payload = await this.jwtService.verifyAsync(token);
+        this.prismaService.setUserId(payload.id);
+        req['userId'] = payload.id;
+        console.log('payload', payload);
       }
     } catch (error) {
-      console.error('Auth middleware error:', error.message);
+      console.error('Auth middleware error:', error);
     }
     next();
   }

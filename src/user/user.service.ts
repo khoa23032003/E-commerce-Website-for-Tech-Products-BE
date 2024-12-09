@@ -1,12 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
-import { UpdateUserDto } from './dto/update-user.dto';
+
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  jwtService: any;
+  constructor(private prisma: PrismaService) {}
+
 
   // Đăng ký người dùng
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
@@ -16,11 +19,15 @@ export class UserService {
   }
 
   // Tìm người dùng qua email
-  async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { email },
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
+    return user;
   }
+
 
 
   // async login(loginUserDto: LoginUserDto) {
@@ -38,10 +45,6 @@ export class UserService {
   //     user,
   //   };
   // }
-
-  findAll() {
-    return `This action returns all user`;
-  }
 
 
 

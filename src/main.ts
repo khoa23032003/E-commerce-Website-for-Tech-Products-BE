@@ -11,8 +11,7 @@ async function bootstrap() {
   // Bật CORS cho tất cả các nguồn
   app.enableCors();
   ConfigModule.forRoot({
-    isGlobal: true, // Giúp biến môi trường khả dụng trên toàn bộ app
-    envFilePath: '.env', // Đảm bảo tệp .env được đọc
+    isGlobal: true,
   });
 
   // cấu hình Swagger
@@ -29,7 +28,9 @@ async function bootstrap() {
     origin: 'http://localhost:3000', // Thay bằng URL của frontend
     credentials: true,
   });
-
+  console.log('COOKIE_EXPIRES_TIME:', process.env.COOKIE_EXPIRES_TIME);
+  console.log('JWT_SECRET:', process.env.JWT_SECRET);
+  
   await app.listen(8080);
 }
 bootstrap();

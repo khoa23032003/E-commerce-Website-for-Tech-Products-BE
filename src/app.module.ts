@@ -51,8 +51,8 @@ import { AuthMiddleware } from './auth/auth.middleware';
 
     // JWT Module Configuration
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'secretKey',
-      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' }, // Adjust expiration time as needed
     }),
   ],
   controllers: [AppController, AuthController],
