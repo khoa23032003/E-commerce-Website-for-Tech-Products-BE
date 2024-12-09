@@ -8,7 +8,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UserService {
   jwtService: any;
+
   constructor(private prisma: PrismaService) {}
+
 
 
   // Đăng ký người dùng
@@ -33,6 +35,7 @@ export class UserService {
   // async login(loginUserDto: LoginUserDto) {
   //   const { email, password } = loginUserDto;
 
+
   //   // Xác thực người dùng
   //   const user = await this.validateUser(email, password);
   //   if (!user) {
@@ -48,19 +51,26 @@ export class UserService {
 
 
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+findAll() {
+  return `This action returns all user`;
+}
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+
+
+update(id: number, updateUserDto: UpdateUserDto) {
+  return `This action updates a #${id} user`;
+}
+
+remove(id: number) {
+  return `This action removes a #${id} user`;
+}
   }
   // Tìm người dùng qua ID
-  async findById(id: string): Promise<User | null> {
-    console.log('id', id);
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
+  async findById(id: string): Promise < User | null > {
+  console.log('id', id);
+  return this.prisma.user.findUnique({
+    where: { id },
+  });
 
-  }
+}
 }
