@@ -10,7 +10,7 @@ import {
 import { SupplierService } from './supplier.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('supplier')
 @Controller('supplier')
@@ -20,6 +20,11 @@ export class SupplierController {
   @ApiOperation({ summary: 'Create a new supplier' })
   @ApiResponse({ status: 201, description: 'Supplier created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid data for supplier creation' })
+  @ApiConsumes('application/x-www-form-urlencoded') // Specify that this endpoint consumes form-data for file upload
+  @ApiBody({
+    description: 'Create supplier details with optional file upload',
+    type: CreateSupplierDto, // Attach the DTO here for Swagger to show the fields
+  })
   @Post()
   create(@Body() createSupplierDto: CreateSupplierDto) {
     return this.supplierService.create(createSupplierDto);
@@ -43,6 +48,11 @@ export class SupplierController {
   @ApiOperation({ summary: 'Update a supplier by ID' })
   @ApiResponse({ status: 200, description: 'Supplier updated successfully' })
   @ApiResponse({ status: 404, description: 'Supplier not found' })
+  @ApiConsumes('application/x-www-form-urlencoded') // Specify that this endpoint consumes form-data for file upload
+  @ApiBody({
+    description: 'Update supplier details with optional file upload',
+    type: UpdateSupplierDto, // Attach the DTO here for Swagger to show the fields
+  })
   @Patch(':id')
   update(
     @Param('id') id: string,
