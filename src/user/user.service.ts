@@ -9,7 +9,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserService {
   jwtService: any;
 
-  constructor(private prisma: PrismaService) { }
+
+  constructor(private prisma: PrismaService) {}
+
 
   // Đăng ký người dùng
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
@@ -51,9 +53,8 @@ export class UserService {
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+
+
 
   remove(id: number) {
     return `This action removes a #${id} user`;

@@ -13,10 +13,12 @@ export class UserController {
     return 'This route is restricted to admin role.';
   }
   @Get()
-  findAll(@Req() req: Request) {
+
+  findAll (@Req() req: Request) {
     const userId = req['userId'];
-    console.log("user: " + userId);
-    return 'This route is user.';
+     console.log("user: "+userId);
+     return 'This route is user.';
+
   }
   @Get('user')
   @Roles('USER')
