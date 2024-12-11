@@ -1,71 +1,26 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-  UseGuards,
-  Res,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Sử dụng JwtAuthGuard cho bảo vệ endpoint
-import { Request, Response } from 'express';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { RoleGuard } from '../guard/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Permissions } from '../decorators/permissions.decorator';
 
 @Controller('user')
+@UseGuards(RoleGuard)
 export class UserController {
-
-  constructor(private readonly userService: UserService) { }
-
-
-  //Đăng ký tài khoản
-  @Post()
-  async register(@Body() createUserDto: CreateUserDto) {
-
-    //return this.userService.register(createUserDto);
-
+  @Get('admin')
+  @Roles('admin')
+  @Permissions('admin')
+  findAllAdmin() {
+    return 'This route is restricted to admin role.';
   }
-
-
-  // @Post('login')
-  // async login(@Body() loginDto: LoginUserDto) {
-
-  //   const token = await this.userService.login(loginDto);
-  //   return {
-  //     message: 'Đăng nhập thành công',
-  //     accessToken: token,
-  //   };
-
-  // }
-
-
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Req() req: Request) {
+    const userId = req['userId'];
+    console.log("user: " + userId);
+    return 'This route is user.';
   }
-
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(id);
-  // }
-
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Get('user')
+  @Roles('USER')
+  findAllUser() {
+    return 'This route is restricted to users role.';
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
-
 }
