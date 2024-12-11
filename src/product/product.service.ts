@@ -48,31 +48,23 @@ export class ProductService {
     return product;
   }
 
-  // ProductService
+  //update product
   async update(id: string, updateProductDto: UpdateProductDto, imageUrl?: string) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
-    });
-
-    if (!product) {
-      throw new Error('Product not found');
-    }
-
-    // Only update the fields that are provided
     const updatedProduct = await this.prisma.product.update({
       where: { id },
       data: {
-        name: updateProductDto.name ?? product.name, // Use existing name if not updated
-        description: updateProductDto.description ?? product.description,
-        price: updateProductDto.price ?? product.price,
-        stock: updateProductDto.stock ?? product.stock,
-        categoryId: updateProductDto.categoryId ?? product.categoryId,
-        imageUrl: imageUrl ?? product.imageUrl, // If imageUrl is updated, use it
+        name: updateProductDto.name,
+        description: updateProductDto.description,
+        price: Number(updateProductDto.price),
+        categoryId: updateProductDto.categoryId,
+        imageUrl: imageUrl,
+        stock: updateProductDto.stock || 0,
       },
     });
 
     return updatedProduct;
   }
+
 
 
   async remove(id: string) {

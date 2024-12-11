@@ -10,7 +10,7 @@ export class UserService {
   jwtService: any;
 
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
 
   // Đăng ký người dùng
@@ -53,7 +53,6 @@ export class UserService {
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
-
 
 
   remove(id: number) {
