@@ -8,4 +8,4 @@ import { CloudinaryProvider } from 'src/cloudinary/cloudinary.provider';
   controllers: [AccessoryController],
   providers: [AccessoryService, PrismaClient, CloudinaryProvider],
 })
-export class AccessoryModule {}
+export class AccessoryModule { }

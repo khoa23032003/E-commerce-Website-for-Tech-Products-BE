@@ -31,26 +31,47 @@ export class AccessoryController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Accessory data with an image file',
-    type: CreateAccessoryDto
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'The name of the accessory' },
+        description: { type: 'string', description: 'The description of the accessory' },
+        price: { type: 'number', description: 'The price of the accessory' },
+        imageUrl: {
+          type: 'string',
+          format: 'binary',
+          description: 'The image file of the accessory'
+        },
+        stock: { type: 'number', description: 'The stock quantity of the accessory' },
+      },
+    },
   })
   @Post()
   @UseInterceptors(FileInterceptor('imageUrl'))
   async create(
-    @Body() createAccessoryDto: CreateAccessoryDto,
-    @UploadedFile() file: Express.Multer.File,
+
+    @Body() createAccessoryDto: CreateAccessoryDto, // Accessory update details
+    @UploadedFile() file?: Express.Multer.File, // Optional file for updating image
   ) {
-    if (!file) {
-      throw new BadRequestException('File image is required');
+    let imageUrl: string | undefined;
+
+    // Nếu có file, thực hiện tải lên hình ảnh
+    if (file) {
+      const uploadResult = await this.cloudinaryProvider.uploadImage(file); // Upload new image if provided
+      imageUrl = uploadResult.secure_url;
     }
 
-    // Upload image to Cloudinary
-    const uploadResult = await this.cloudinaryProvider.uploadImage(file);
+    // Kiểm tra và ép kiểu trường price về dạng float
+    if (createAccessoryDto.price) {
+      createAccessoryDto.price = parseFloat(createAccessoryDto.price.toString()); // Chuyển giá trị price thành float
+    }
 
-    // Create accessory with uploaded image URL
-    return this.accessoryService.create(
-      createAccessoryDto,
-      uploadResult.secure_url,
-    );
+    // Kiểm tra và ép kiểu trường stock về dạng integer
+    if (createAccessoryDto.stock) {
+      createAccessoryDto.stock = parseInt(createAccessoryDto.stock.toString(), 10); // Chuyển giá trị stock thành int
+    }
+
+    return this.accessoryService.create(createAccessoryDto, imageUrl); // Gọi service để cập nhật phụ kiện
   }
 
   // Get all accessories
@@ -74,7 +95,11 @@ export class AccessoryController {
   @ApiOperation({ summary: 'Update an existing accessory' })
   @ApiResponse({ status: 200, description: 'Accessory updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
-
+  @ApiConsumes('multipart/form-data') // Specify that this endpoint consumes form-data for file upload
+  @ApiBody({
+    description: 'Update accessory details with optional file upload',
+    type: UpdateAccessoryDto, // Attach the DTO here for Swagger to show the fields
+  })
   @Patch(':id')
   @UseInterceptors(FileInterceptor('imageUrl')) // FileInterceptor for handling uploaded files
   async update(
@@ -84,12 +109,23 @@ export class AccessoryController {
   ) {
     let imageUrl: string | undefined;
 
+    // Nếu có file, thực hiện tải lên hình ảnh
     if (file) {
       const uploadResult = await this.cloudinaryProvider.uploadImage(file); // Upload new image if provided
       imageUrl = uploadResult.secure_url;
     }
 
-    return this.accessoryService.update(id, updateAccessoryDto, imageUrl); // Update accessory
+    // Kiểm tra và ép kiểu trường price về dạng float
+    if (updateAccessoryDto.price) {
+      updateAccessoryDto.price = parseFloat(updateAccessoryDto.price.toString()); // Chuyển giá trị price thành float
+    }
+
+    // Kiểm tra và ép kiểu trường stock về dạng integer
+    if (updateAccessoryDto.stock) {
+      updateAccessoryDto.stock = parseInt(updateAccessoryDto.stock.toString(), 10); // Chuyển giá trị stock thành int
+    }
+
+    return this.accessoryService.update(id, updateAccessoryDto, imageUrl); // Gọi service để cập nhật phụ kiện
   }
 
   // Delete an accessory by ID
