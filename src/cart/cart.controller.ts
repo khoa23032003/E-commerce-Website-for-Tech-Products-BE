@@ -1,73 +1,37 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartItemDto } from './dto/create-cart.dto';
+import { AddCartItemDto } from './dto/add-cartItem.dto';
 import { UpdateCartItemDto } from './dto/update-cart.dto';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('cart')
 @Controller('cart')
-// @UseGuards(JwtAuthGuard)
 export class CartController {
-  constructor(private readonly cartService: CartService) { }
+  constructor(private readonly cartService: CartService) {}
 
-  // Get user cart information
-  @ApiOperation({ summary: 'Get cart information of the user' })
-  @ApiResponse({
-    status: 200,
-    description: 'Cart details fetched successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @Get()
-  getCart(@Req() req: any) {
-    return this.cartService.getCart(req.user.userId);
-  }
+  // thêm giỏ hàng
+  @Post('add-item')
+  async addItemToCart(@Body() addCartItemDto: AddCartItemDto,@Req() req: Request) {
 
-  // Add product to the cart
-  @ApiOperation({ summary: 'Add a product to the cart' })
-  @ApiResponse({
-    status: 201,
-    description: 'Product added to cart successfully',
-  })
-  @ApiResponse({ status: 400, description: 'Invalid input' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @Post('add')
-  addToCart(@Req() req: any, @Body() createCartItemDto: CreateCartItemDto) {
-    return this.cartService.addToCart(req.user.userId, createCartItemDto);
+    const id = req['userId']; 
+    return await this.cartService.addCartItem(addCartItemDto,id);
   }
-
-  // Update the quantity of a product in the cart
-  @ApiOperation({ summary: 'Update quantity of a cart item' })
-  @ApiResponse({ status: 200, description: 'Cart item updated successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid input' })
-  @ApiResponse({ status: 404, description: 'Cart item not found' })
-  @Patch(':id')
-  updateCartItem(
-    @Param('id') cartItemId: string,
-    @Body() updateCartItemDto: UpdateCartItemDto,
-  ) {
-    return this.cartService.updateCartItem(cartItemId, updateCartItemDto);
+  // xóa 1 sản phẩm trong giỏ hàng
+@Delete('delete-item/:id')
+  async deleteItemToCart(@Param('id') cartItemId: string) {
+    return await this.cartService.deleteCartItem(cartItemId);
   }
-
-  // Remove product from the cart
-  @ApiOperation({ summary: 'Remove a product from the cart' })
-  @ApiResponse({
-    status: 200,
-    description: 'Product removed from cart successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Cart item not found' })
-  @Delete(':id')
-  removeCartItem(@Param('id') cartItemId: string) {
-    return this.cartService.removeCartItem(cartItemId);
+  // xóa toàn bộ giỏ hàng
+  @Delete('delete-all')
+  async deleteAllItemToCart(@Req() req: Request) {
+    return await this.cartService.deleteCart(req['userId']);
   }
-}
+  // cập nhật giỏ hàng
+  @Post('update-item')
+  async updateItemToCart(@Body() updateCartItemDto: UpdateCartItemDto) {
+    return await this.cartService.updateCartItem(updateCartItemDto.id, updateCartItemDto.quantity);
+  }
+  // lấy giỏ hàng
+  @Get('get-item')
+  async getItemToCart(@Req() req: Request) {
+    return await this.cartService.getCart(req['userId']);
+  }
+} 
