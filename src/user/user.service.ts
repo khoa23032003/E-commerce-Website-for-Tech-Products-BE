@@ -59,4 +59,20 @@ export class UserService {
     });
 
   }
+  
+  async getUserRoles(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { roles: true },
+    });
+  }
+
+  async assignRole(userId: string, roleId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        roleIds: { push: roleId },
+      },
+    });
+  }
 }

@@ -21,7 +21,9 @@ export class AuthService {
       email,
       password: hashedPassword,
       name,
-      role: 'CUSTOMER',
+      roles: {
+        connect: [{ name: 'USER' }],
+      },
     });
   }
 
@@ -46,7 +48,7 @@ export class AuthService {
         result: 'sai mật khẩu',
       };    }
 
-    const payload = { id: user.id, email: user.email, role: user.role };
+    const payload = { id: user.id, email: user.email};
     //console.log('payload', payload);
 
     const token = this.jwtService.sign(payload, {

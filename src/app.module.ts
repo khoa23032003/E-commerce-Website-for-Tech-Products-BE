@@ -26,6 +26,9 @@ import { UserModule } from './user/user.module';
 
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permission/permission.module';
+import { permission } from 'process';
 
 @Module({
   imports: [
@@ -48,12 +51,17 @@ import { AuthMiddleware } from './auth/auth.middleware';
     UserModule,
     JwtModule,
     PrismaModule,
-
+    RoleModule,
+    PermissionModule,
     // JWT Module Configuration
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' }, // Adjust expiration time as needed
     }),
+
+    RoleModule,
+
+    PermissionModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, CloudinaryProvider, AuthService],
