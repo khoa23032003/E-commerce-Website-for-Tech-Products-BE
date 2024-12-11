@@ -13,7 +13,8 @@ model User {
   email     String   @unique // Email phải là duy nhất
   password  String // Mật khẩu của người dùng
   name      String // Tên của người dùng
-  role      String   @default("CUSTOMER") // Vai trò, mặc định là "CUSTOMER"
+  roles            Role[]       @relation(fields: [roleIds], references: [id])
+  roleIds          String[]     @db.ObjectId
   refresh_token String?
   createdAt DateTime @default(now()) // Ngày tạo, tự động lấy thời gian hiện tại
   updatedAt DateTime @updatedAt // Ngày cập nhật, tự động cập nhật khi thay đổi
@@ -25,6 +26,29 @@ model User {
   addresses    Address[] // Địa chỉ của người dùng
   Notification Notification[]
 }
+
+model Role {
+    id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    name          String       @unique
+    description   String?
+    permissions   Permission[] @relation(fields: [permissionIds], references: [id])
+    permissionIds String[]     @db.ObjectId
+    users         User[]       @relation(fields: [userIds], references: [id])
+    userIds       String[]     @db.ObjectId
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+}
+
+model Permission {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    name        String   @unique
+    description String?
+    roles       Role[]   @relation(fields: [roleIds], references: [id])
+    roleIds     String[] @db.ObjectId
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
 
 // Bảng danh mục sản phẩm (Category)
 model Category {

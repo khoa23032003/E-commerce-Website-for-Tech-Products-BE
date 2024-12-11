@@ -1,0 +1,47 @@
+// import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+// import { Reflector } from '@nestjs/core';
+// import { PrismaService } from 'src/prisma/prisma.service';
+
+// @Injectable()
+// export class RoleGuard implements CanActivate {
+//   constructor(
+//     private readonly reflector: Reflector,
+//     private readonly prisma: PrismaService,
+//   ) {}
+
+//   async canActivate(context: ExecutionContext): Promise<boolean> {
+//     // Lấy roles yêu cầu từ metadata của route handler
+//     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+//     console.log('Required Roles:', requiredRoles);   
+
+//     if (!requiredRoles) {
+//       return true; 
+//     }
+    
+//     // Lấy request từ context
+//     const request = context.switchToHttp().getRequest();  
+//     console.log('User ID:', request['userId']);
+//     //console.log('Request Cookies:', request.cookies); 
+//     if (!request['userId']) {
+//         throw new UnauthorizedException('User not authenticated');
+//       }
+      
+//     const userId = request['userId'];    
+//     console.log('User ID:', userId); 
+    
+//     // Lấy thông tin người dùng từ database
+//     const user = await this.prisma.user.findUnique({
+//       where: { id: userId },
+//       include: { roles: true },
+//     });
+ 
+//     console.log('User infor:', user);   
+//     console.log('User Roles:', user.roles.map(role => role.name));   
+   
+//     // Kiểm tra xem người dùng có ít nhất một role trong danh sách roles yêu cầu không
+//     const hasRole = user.roles.some(role => requiredRoles.includes(role.name));
+//     console.log('Has Required Role:', hasRole);   
+
+//     return hasRole;
+//   }
+// }
