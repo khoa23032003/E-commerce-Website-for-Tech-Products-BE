@@ -64,7 +64,7 @@ update(id: number, updateUserDto: UpdateUserDto) {
 remove(id: number) {
   return `This action removes a #${id} user`;
 }
-  }
+  
   // Tìm người dùng qua ID
   async findById(id: string): Promise < User | null > {
   console.log('id', id);
@@ -72,7 +72,7 @@ remove(id: number) {
     where: { id },
   });
 
-
+  }
   
   async getUserRoles(userId: string) {
     return this.prisma.user.findUnique({
