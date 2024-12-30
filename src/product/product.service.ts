@@ -31,14 +31,9 @@ export class ProductService {
     return this.prisma.product.findMany();
   }
 
-  // async findOne(id: string) {
-  //   return await this.prisma.product.findUnique({
-  //     where: { id }, // Sử dụng đúng cú pháp cho Prisma
-  //   });
-  // }
 
   async findOne(id: string) {
-    // Không có logic nào yêu cầu xác thực JWT ở đây
+
     const product = await this.prisma.product.findUnique({
       where: { id },
     });
@@ -66,7 +61,7 @@ export class ProductService {
   }
 
 
-
+  //remove product
   async remove(id: string) {
     const deletedProduct = await this.prisma.product.delete({
       where: { id: id },

@@ -9,7 +9,7 @@ export class CreateProductDto {
   description: string;
 
   @ApiProperty({ description: 'The price of the product' })
-  price: number;
+  price?: number;
 
   @ApiProperty({ description: 'The category ID of the product' })
   categoryId: string;
