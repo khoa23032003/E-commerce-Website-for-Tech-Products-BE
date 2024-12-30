@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   private prisma = new PrismaClient();
 
@@ -41,20 +41,26 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
       user.password,
-    );    
+    );
     if (!isPasswordValid) {
       return {
         success: false,
         result: 'sai mật khẩu',
-      };    }
+      };
+    }
 
-    const payload = { id: user.id, email: user.email};
+    // Thêm thông tin vào payload
+    const payload = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    };
     //console.log('payload', payload);
 
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET || 'hoangtuan', // Truyền secret trực tiếp
     });
-    
+
     res.cookie('jwt', token, {
       expires: new Date(
         Date.now() +
@@ -70,19 +76,20 @@ export class AuthService {
 
   async getUserInfo(userId: string) {
     console.log('userId', userId);
-    if(!userId){
+    if (!userId) {
       return {
         success: false,
-        result: 'Không tìm thấy user'
-      }
+        result: 'Không tìm thấy user',
+      };
     }
-    const x= await this.prisma.user.findUnique({
-      where: { id: userId }
+    const x = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, name: true },
     });
-    return{
+    return {
       success: Boolean(x),
-      result: x ?? 'Không tìm thấy user'
-    }
+      result: x ?? 'Không tìm thấy user',
+    };
   }
   verifyToken(token: string): any {
     try {
