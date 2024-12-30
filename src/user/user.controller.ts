@@ -14,10 +14,12 @@ export class UserController {
   }
   @Get()
 
+
   findAll (@Req() req: Request) {
     const userId = req['userId'];
      console.log("user: "+userId);
      return 'This route is user.';
+
 
   }
   @Get('user')

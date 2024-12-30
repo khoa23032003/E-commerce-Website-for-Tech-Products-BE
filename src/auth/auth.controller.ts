@@ -43,7 +43,6 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-   
     return this.authService.login(loginDto, res);
   }
 
@@ -60,7 +59,7 @@ export class AuthController {
     }
     const userId = req['userId'];
     console.log('user: ' + userId);
- 
+
     return this.authService.getUserInfo(userId);
   }
 

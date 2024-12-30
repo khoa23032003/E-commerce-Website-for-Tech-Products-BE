@@ -17,6 +17,8 @@ export class AuthMiddleware implements NestMiddleware {
         const payload = await this.jwtService.verifyAsync(token);
         this.prismaService.setUserId(payload.id);
         req['userId'] = payload.id;
+        req['userEmail'] = payload.email;
+        req['userName'] = payload.name;
         console.log('payload', payload);
       }
     } catch (error) {
