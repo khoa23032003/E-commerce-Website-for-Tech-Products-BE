@@ -9,7 +9,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserService {
   jwtService: any;
 
-  constructor(private prisma: PrismaService) {}
+
+  constructor(private prisma: PrismaService) { }
+
 
   // Đăng ký người dùng
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
@@ -52,17 +54,25 @@ export class UserService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 
+
+update(id: number, updateUserDto: UpdateUserDto) {
+  return `This action updates a #${id} user`;
+}
+
+remove(id: number) {
+  return `This action removes a #${id} user`;
+}
+  
   // Tìm người dùng qua ID
-  async findById(id: string): Promise<User | null> {
-    console.log('id', id);
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
+  async findById(id: string): Promise < User | null > {
+  console.log('id', id);
+  return this.prisma.user.findUnique({
+    where: { id },
+  });
+
   }
+  
 
   async getUserRoles(userId: string) {
     return this.prisma.user.findUnique({
